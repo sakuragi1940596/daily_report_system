@@ -49,7 +49,7 @@ public interface JpaConst {
     String JPQL_PARM_PASSWORD = "password"; //パスワード
     String JPQL_PARM_EMPLOYEE = "employee"; //従業員
 
-    //NamedQueryの nameとquery
+    //NamedQueryの nameとquery。DTOで使用するqueryと各nameについても、ここで定数として一元管理する。
     //全ての従業員をidの降順に取得する
     String Q_EMP_GET_ALL = ENTITY_EMP + ".getAll"; //name
     String Q_EMP_GET_ALL_DEF = "SELECT e FROM Employee AS e ORDER BY e.id DESC"; //query
