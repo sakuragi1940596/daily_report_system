@@ -18,8 +18,12 @@ public class EmployeeConverter {
      * @param ev EmployeeViewのインスタンス
      * @return Employeeのインスタンス
      */
+    //呼び出し先で渡される値が、引数のEmployeeView evに渡され、EmplloyeeViewクラスのインスタンス変数evが生成される
     public static Employee toModel(EmployeeView ev) {
-
+        //戻り値としてEmployeeクラスのインスタンスオブジェクトを返す
+        //Employeeクラスにコンストラクタは記述していないが、lombokでいつも通りの各フィールドを引数とするコンストラクタが自動で生成される。
+        /*つまり、以下の{}内は引数ありコンストラクタの各引数であるフィールドに、このメソッドの引数で生成されるEmployeeViewオブジェクト
+        の各フィールドの値をgetterで取得し、渡しているということである。*/
         return new Employee(
                 ev.getId(),
                 ev.getCode(),
