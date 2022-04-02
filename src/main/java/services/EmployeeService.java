@@ -15,6 +15,7 @@ import utils.EncryptUtil;
 /**
  * 従業員テーブルの操作に関わる処理を行うクラス
  */
+//このクラスが、Employee関係のDAOクラスである。スーパークラスであるServiceBaseクラスをextendsにより継承している
 public class EmployeeService extends ServiceBase {
 
     /**
@@ -23,11 +24,15 @@ public class EmployeeService extends ServiceBase {
      * @return 表示するデータのリスト
      */
     public List<EmployeeView> getPerPage(int page) {
+        //DTOクラスのEmployeeで定義したJPQLを引数にすることで、テーブルからgetAllで全ての値を取得
         List<Employee> employees = em.createNamedQuery(JpaConst.Q_EMP_GET_ALL, Employee.class)
+                //引数に渡されたページ数から、最初のページをセット
                 .setFirstResult(JpaConst.ROW_PER_PAGE * (page - 1))
+                //最後のページ数をセット
                 .setMaxResults(JpaConst.ROW_PER_PAGE)
+                //List employeeに格納されているテーブルから取得した全てのデータを、List型で取得
                 .getResultList();
-
+        //コンバータークラスのtoViewListメソッドを呼び出し、引数に上記で取得したデータの全てを渡すことで、Listを作成
         return EmployeeConverter.toViewList(employees);
     }
 
@@ -35,10 +40,12 @@ public class EmployeeService extends ServiceBase {
      * 従業員テーブルのデータの件数を取得し、返却する
      * @return 従業員テーブルのデータの件数
      */
+    //戻り値が参照している件数を取得するために、戻り値のデータ型をlongに指定する
     public long countAll() {
+        //戻り値のデータ型がlongなので、createNamedQueryで指定するクラスはlong.classとなる。
         long empCount = (long) em.createNamedQuery(JpaConst.Q_EMP_COUNT, Long.class)
+                //getSingleResultにより、取得した値をデータ型のない数値で１件返す
                 .getSingleResult();
-
         return empCount;
     }
 
@@ -53,17 +60,28 @@ public class EmployeeService extends ServiceBase {
         Employee e = null;
         try {
             //パスワードのハッシュ化
+            //アプリケーションスコープのpepper文字列と組み合わせてハッシュ化する
             String pass = EncryptUtil.getPasswordEncrypt(plainPass, pepper);
 
             //社員番号とハッシュ化済パスワードを条件に未削除の従業員を1件取得する
+            //createNamedQueryによって、JPQL文（引数に渡した定数によって定義）を実行して、データを種痘する。
+            /*下記の定数で定義されたJPQLの中身は次のとおりである（DTOモデル参照）
+             * "SELECT e FROM Employee AS e WHERE e.deleteFlag = 0 AND e.code = :" + JPQL_PARM_CODE + " AND e.password = :" + JPQL_PARM_PASSWORD;
+             */
             e = em.createNamedQuery(JpaConst.Q_EMP_GET_BY_CODE_AND_PASS, Employee.class)
+                    //.setParameterによって、上記のJPQL文で定数として定義した部分に、codeとpassを代入
+                    //代入されるのは、" + JPQL_PARM_CODE + と、" + JPQL_PARM_PASSWORDの部分である
+                    //これらによってJPQL文が完成し、実行されることでテーブルからデータ取得。
                     .setParameter(JpaConst.JPQL_PARM_CODE, code)
                     .setParameter(JpaConst.JPQL_PARM_PASSWORD, pass)
+                    //テーブルから取得したデータ１件を、最初に指定したEmployeeクラスのオブジェクトに格納する。
                     .getSingleResult();
 
         } catch (NoResultException ex) {
         }
-
+        //eは上記のデータが格納されたEmployeeオブジェクトのインスタンス変数である
+        /*コンバーターのtoViewメソッドの引数に上記のeを渡すことで、インスタンスオブジェクトEmployeeと同じデータを持つオブジェクト
+        が生成される*/
         return EmployeeConverter.toView(e);
 
     }
@@ -106,10 +124,12 @@ public class EmployeeService extends ServiceBase {
 
         //登録日時、更新日時は現在時刻を設定する
         LocalDateTime now = LocalDateTime.now();
+        //EmployeeViewのインスタンスオブジェクト内のsetterを呼び出し、同オブジェクトのフィールドに値を代入する。
         ev.setCreatedAt(now);
         ev.setUpdatedAt(now);
 
         //登録内容のバリデーションを行う
+        //第３引数と第４引数にtrueを渡すことで、メソッドを実行する（Boolean型のため真偽値に対応できる）
         List<String> errors = EmployeeValidator.validate(this, ev, true, true);
 
         //バリデーションエラーがなければデータを登録する
@@ -132,6 +152,7 @@ public class EmployeeService extends ServiceBase {
         //idを条件に登録済みの従業員情報を取得する
         EmployeeView savedEmp = findOne(ev.getId());
 
+        //必要な場合のみバリデーションが実行されるように場合分けるする。createのようにtrueとせず、変数で対応する。
         boolean validateCode = false;
         if (!savedEmp.getCode().equals(ev.getCode())) {
             //社員番号を更新する場合
@@ -224,6 +245,8 @@ public class EmployeeService extends ServiceBase {
      * @return 取得データのインスタンス
      */
     private Employee findOneInternal(int id) {
+        //EntityManagerクラスのfind()メソッドにより、渡されたidの値でテーブルを検索し、その結果をDTOクラスのオブジェクトとして返す。
+        //これにより、検索結果が格納されたインスタンス変数eのEmployeeクラスオブジェクトが生成される。
         Employee e = em.find(Employee.class, id);
 
         return e;

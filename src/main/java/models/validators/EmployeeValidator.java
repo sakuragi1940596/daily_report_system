@@ -21,12 +21,15 @@ public class EmployeeValidator {
      * @param passwordCheckFlag パスワードの入力チェックを実施するかどうか(実施する:true 実施しない:false)
      * @return エラーのリスト
      */
+    //戻り値をListとするvalidateメソッドを定義し、引数にクラス型変数と、ラッパークラス型の変数を定義
     public static List<String> validate(
             EmployeeService service, EmployeeView ev, Boolean codeDuplicateCheckFlag, Boolean passwordCheckFlag) {
+        //errorsのリストを作成
         List<String> errors = new ArrayList<String>();
 
         //社員番号のチェック
         String codeError = validateCode(service, ev.getCode(), codeDuplicateCheckFlag);
+        //codeErrorが空白ではない、つまりエラー情報が追加されている場合にはerrorsリストにその情報を追加する
         if (!codeError.equals("")) {
             errors.add(codeError);
         }
@@ -62,7 +65,7 @@ public class EmployeeValidator {
 
         if (codeDuplicateCheckFlag) {
             //社員番号の重複チェックを実施
-
+            //long型のemployeesCountにより、右辺の件数を参照できる
             long employeesCount = isDuplicateEmployee(service, code);
 
             //同一社員番号が既に登録されている場合はエラーメッセージを返却

@@ -50,8 +50,9 @@ public interface JpaConst {
     String JPQL_PARM_EMPLOYEE = "employee"; //従業員
 
     //NamedQueryの nameとquery。DTOで使用するqueryと各nameについても、ここで定数として一元管理する。
-    //全ての従業員をidの降順に取得する
-    String Q_EMP_GET_ALL = ENTITY_EMP + ".getAll"; //name
+    //全ての従業員をidの降順に取得する。以下文字列同士を+で合体させて１つにしている。
+    //ENTITY_EMPは、上記で定義されているEntity名の１つであり、employeeの文字列である。
+    String Q_EMP_GET_ALL = ENTITY_EMP + ".getAll"; //name　employee.getAllとなり、employeeオブジェクトのgetAllを呼び出す。
     String Q_EMP_GET_ALL_DEF = "SELECT e FROM Employee AS e ORDER BY e.id DESC"; //query
     //全ての従業員の件数を取得する
     String Q_EMP_COUNT = ENTITY_EMP + ".count";

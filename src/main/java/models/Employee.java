@@ -17,11 +17,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-//EmployeeDATA DTO
+/**
+ * 従業員データのDTOモデル
+ *
+ */
 @Table(name = JpaConst.TABLE_EMP)
 @NamedQueries({
     @NamedQuery(
-            //以下、queryを呼び出す際のnameをそれぞれ指定している
             name = JpaConst.Q_EMP_GET_ALL,
             query = JpaConst.Q_EMP_GET_ALL_DEF),
     @NamedQuery(
@@ -35,44 +37,61 @@ import lombok.Setter;
             query = JpaConst.Q_EMP_GET_BY_CODE_AND_PASS_DEF)
 })
 
-//lombokを利用して、以下の４つにつき自動生成を行う
 @Getter //全てのクラスフィールドについてgetterを自動生成する(Lombok)
 @Setter //全てのクラスフィールドについてsetterを自動生成する(Lombok)
 @NoArgsConstructor //引数なしコンストラクタを自動生成する(Lombok)
 @AllArgsConstructor //全てのクラスフィールドを引数にもつ引数ありコンストラクタを自動生成する(Lombok)
 @Entity
 public class Employee {
-    //id
+
+    /**
+     * id
+     */
     @Id
     @Column(name = JpaConst.EMP_COL_ID)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    //EmployeeNunber
+    /**
+     * 社員番号
+     */
     @Column(name = JpaConst.EMP_COL_CODE, nullable = false, unique = true)
     private String code;
 
-    //Name
+    /**
+     * 氏名
+     */
     @Column(name = JpaConst.EMP_COL_NAME, nullable = false)
     private String name;
 
-    //Password
-    @Column(name = JpaConst.EMP_COL_PASS,length = 64, nullable = false)
+    /**
+     * パスワード
+     */
+    @Column(name = JpaConst.EMP_COL_PASS, length = 64, nullable = false)
     private String password;
 
-    //ManagerCheck(0=general 1=Manager)
+    /**
+     * 管理者権限があるかどうか（一般：0、管理者：1）
+     */
     @Column(name = JpaConst.EMP_COL_ADMIN_FLAG, nullable = false)
     private Integer adminFlag;
 
-    //CreatedTime
+    /**
+     *登録日時
+     */
     @Column(name = JpaConst.EMP_COL_CREATED_AT, nullable = false)
-    private LocalDateTime createdAt ;
+    private LocalDateTime createdAt;
 
-    //UpdatedTime
+    /**
+     * 更新日時
+     */
     @Column(name = JpaConst.EMP_COL_UPDATED_AT, nullable = false)
-    private LocalDateTime updatedAt ;
+    private LocalDateTime updatedAt;
 
-    //DeleteCheck(0=delete,1=exist)
-    @Column(name = JpaConst.EMP_COL_CODE, nullable = false)
+    /**
+     * 削除された従業員かどうか（現役：0、削除済み：1）
+     */
+    @Column(name = JpaConst.EMP_COL_DELETE_FLAG, nullable = false)
     private Integer deleteFlag;
+
 }
