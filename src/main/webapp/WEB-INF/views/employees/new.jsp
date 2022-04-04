@@ -9,7 +9,7 @@
 <c:import url="../layout/app.jsp">
     <c:param name="content">
         <h2>従業員　新規登録ページ</h2>
-
+        <%-- methodをPOSTにして、acationで指定したURLにfromの入力情報を送る --%>
         <form method="POST" action="<c:url value='?action=${action}&command=${commCrt}' />">
             <c:import url="_form.jsp" />
         </form>

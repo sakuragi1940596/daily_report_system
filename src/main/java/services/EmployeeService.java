@@ -24,11 +24,13 @@ public class EmployeeService extends ServiceBase {
      * @return 表示するデータのリスト
      */
     public List<EmployeeView> getPerPage(int page) {
-        //DTOクラスのEmployeeで定義したJPQLを引数にすることで、テーブルからgetAllで全ての値を取得
+        /* DTOクラスのEmployeeで定義したJPQLを引数にすることで、テーブルからgetAllで全ての値を取得し、
+         *取得した各従業員のデータを持つEmployeeクラスのオブジェクトを作成する。
+         */
         List<Employee> employees = em.createNamedQuery(JpaConst.Q_EMP_GET_ALL, Employee.class)
-                //引数に渡されたページ数から、最初のページをセット
+                //引数に渡されたページ数から、最初のページとなるデータをデータベースから取得
                 .setFirstResult(JpaConst.ROW_PER_PAGE * (page - 1))
-                //最後のページ数をセット
+                //１ページに表示する最大のデータ件数を取得（定数により１５）
                 .setMaxResults(JpaConst.ROW_PER_PAGE)
                 //List employeeに格納されているテーブルから取得した全てのデータを、List型で取得
                 .getResultList();
@@ -44,7 +46,7 @@ public class EmployeeService extends ServiceBase {
     public long countAll() {
         //戻り値のデータ型がlongなので、createNamedQueryで指定するクラスはlong.classとなる。
         long empCount = (long) em.createNamedQuery(JpaConst.Q_EMP_COUNT, Long.class)
-                //getSingleResultにより、取得した値をデータ型のない数値で１件返す
+                //getSingleResultにより、取得した値をデータ型のない数値で１件返す。longで取得するのは件数という値１つのためsingleで
                 .getSingleResult();
         return empCount;
     }
@@ -134,6 +136,11 @@ public class EmployeeService extends ServiceBase {
 
         //バリデーションエラーがなければデータを登録する
         if (errors.size() == 0) {
+            /*このcreateは、このserviceクラスの一番下にあるcreateメソッドのことであり、
+             * 引数が異なるためオーバーロードを利用して同名メソッドを作成している。
+             * 一番下にあるcreateは、DBへ接続し、引数に渡されたevのオブジェクトの各フィールドの値をテーブルの各columnへ登録し、
+             * commitで保存している。
+             */
             create(ev);
         }
 

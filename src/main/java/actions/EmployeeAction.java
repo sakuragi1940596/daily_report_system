@@ -18,20 +18,24 @@ import services.EmployeeService;
  *
  */
 public class EmployeeAction extends ActionBase {
-
+    //DAOlassのEmployeeService型のフィールドを定義。privateでカプセル化
     private EmployeeService service;
 
     /**
      * メソッドを実行する
+     * ActionBaseの抽象メソッドprocess()を継承
      */
+    //このメソッドによりEmployeeServiceオブジェクトを生成することで、DAOとしての同クラスの機能を利用して、テーブル操作を行う。
     @Override
     public void process() throws ServletException, IOException {
-
+        //EmployeeServiceのインスタンスオブジェクトを生成
         service = new EmployeeService();
 
-        //メソッドを実行
+        /*Actionクラスのinvoke()メソッドを実行することで、HTTPリクエストからフロントコントローラが取得したcommandに応じたメソッドが
+         * このEmployeeActionから選択され、実行される。
+         */
         invoke();
-
+        //DAOクラスをcloseすることで、DBとの接続をやめる。
         service.close();
     }
 
@@ -44,24 +48,33 @@ public class EmployeeAction extends ActionBase {
 
         //指定されたページ数の一覧画面に表示するデータを取得
         int page = getPage();
+        //右辺のメソッドにより、テーブルから取得したデータが配列として格納されているtoViewListを参照
         List<EmployeeView> employees = service.getPerPage(page);
 
         //全ての従業員データの件数を取得
         long employeeCount = service.countAll();
 
+        /*putRequestScopeメソッドにより、引数２に取得した各値が格納されたオブジェクトを、
+         * 引数１にJSPで使用する際の名称を定数を利用して指定し、RequestScopneに格納する。
+         * なお、引数２のデータ型はVというジェネリクス型であり、全てのデータ型に対応できる。
+         */
         putRequestScope(AttributeConst.EMPLOYEES, employees); //取得した従業員データ
         putRequestScope(AttributeConst.EMP_COUNT, employeeCount); //全ての従業員データの件数
         putRequestScope(AttributeConst.PAGE, page); //ページ数
         putRequestScope(AttributeConst.MAX_ROW, JpaConst.ROW_PER_PAGE); //1ページに表示するレコードの数
 
         //セッションにフラッシュメッセージが設定されている場合はリクエストスコープに移し替え、セッションからは削除する
+        //redirectされてしまうため、RequestScopeだと消えてしまうため、SessionScopneに保存していたものを移し替える。
+        //fulashmessageがsessionscopeに存在する場合は、それをString型のfulashで取得
         String flush = getSessionScope(AttributeConst.FLUSH);
+        //上記がnullではない、fulashmessageが存在する場合に、それをRequestScopeに格納し、SessionScopeの値はremoveで削除
         if (flush != null) {
             putRequestScope(AttributeConst.FLUSH, flush);
             removeSessionScope(AttributeConst.FLUSH);
         }
 
         //一覧画面を表示
+        //引数に指定した定数はemployees/indexであり、これがviewの存在するパスとなる。
         forward(ForwardConst.FW_EMP_INDEX);
 
     }
@@ -72,11 +85,12 @@ public class EmployeeAction extends ActionBase {
      * @throws IOException
      */
     public void entryNew() throws ServletException, IOException {
-
+        //ActionBaseのgetTokenId()でSessionScopeから取得したsessionidを、RequestScopeに_tokenとして格納
         putRequestScope(AttributeConst.TOKEN, getTokenId()); //CSRF対策用トークン
         putRequestScope(AttributeConst.EMPLOYEE, new EmployeeView()); //空の従業員インスタンス
 
         //新規登録画面を表示
+
         forward(ForwardConst.FW_EMP_NEW);
     }
 
@@ -91,6 +105,7 @@ public class EmployeeAction extends ActionBase {
         if (checkToken()) {
 
             //パラメータの値を元に従業員情報のインスタンスを作成する
+            //コンストラクタの各フィールドに値を渡している。nullになっているのは、自動生成されるidなど、必要がない部分である。
             EmployeeView ev = new EmployeeView(
                     null,
                     getRequestParam(AttributeConst.EMP_CODE),
@@ -101,10 +116,15 @@ public class EmployeeAction extends ActionBase {
                     null,
                     AttributeConst.DEL_FLAG_FALSE.getIntegerValue());
 
-            //アプリケーションスコープからpepper文字列を取得
+            //アプリケーションスコープからpepper文字列を取得（passwardのハッシュ化のため。
             String pepper = getContextScope(PropertyConst.PEPPER);
 
-            //従業員情報登録
+            //従業員情報登録する。serviceクラスのcreateメソッドを使用する。
+            /*createメソッドの引数１にevを渡すことで、EmployeeView ev = new Employee()となるため、
+             * 上記のevと同じ値を持つインスタンスオブジェクトが生成される。
+             * createメソッドの処理が順次行われ、オブジェクトから取得したパスワードのハッシュ化、登録日時、更新日時がnullから上書きされる。
+             * validationが行われ、問題なければテーブルにデータが登録される。
+             */
             List<String> errors = service.create(ev, pepper);
 
             if (errors.size() > 0) {
@@ -146,7 +166,7 @@ public class EmployeeAction extends ActionBase {
             forward(ForwardConst.FW_ERR_UNKNOWN);
             return;
         }
-
+        //取得した従業員情報evをemployeeとしてRequestScopeに格納して、JSPで表示できるようにする。
         putRequestScope(AttributeConst.EMPLOYEE, ev); //取得した従業員情報
 
         //詳細画面を表示

@@ -10,7 +10,7 @@
 
 <c:import url="/WEB-INF/views/layout/app.jsp">
     <c:param name="content">
-
+        <%-- showactionによりRequestScopeに格納された従業員情情報をemployeeから取得する --%>
         <h2>id : ${employee.id} の従業員情報 詳細ページ</h2>
 
         <table>

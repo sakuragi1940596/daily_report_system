@@ -20,6 +20,7 @@ import constants.PropertyConst;
  *
  */
 public abstract class ActionBase {
+    //フロントコントローラから受け取るHTTPリクエストの値を取得するためのフィールドを設定
     protected ServletContext context;
     protected HttpServletRequest request;
     protected HttpServletResponse response;
@@ -44,6 +45,9 @@ public abstract class ActionBase {
      * フロントコントローラから呼び出されるメソッド
      * @throws ServletException
      * @throws IOException
+     */
+    /*抽象メソッド。各ActionクラスでOverrideにより継承
+     * このメソッドにより、各Actionに必要なserviceクラスのインスタンスオブジェクトを生成し、テーブル操作を行えるようにする。
      */
     public abstract void process() throws ServletException, IOException;
 
@@ -122,6 +126,7 @@ public abstract class ActionBase {
     protected boolean checkToken() throws ServletException, IOException {
 
         //パラメータからtokenの値を取得
+        //formのJSPからhidden要素として送信される従業員idの_tokenを取得
         String _token = getRequestParam(AttributeConst.TOKEN);
 
         if (_token == null || !(_token.equals(getTokenId()))) {
@@ -150,6 +155,7 @@ public abstract class ActionBase {
      */
     protected int getPage() {
         int page;
+        //getParameterでHTTPリクエストから取得する値のデータ型はString型なので、toNumberで数字にする
         page = toNumber(request.getParameter(AttributeConst.PAGE.getValue()));
         if (page == Integer.MIN_VALUE) {
             page = 1;
