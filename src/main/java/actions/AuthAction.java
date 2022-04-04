@@ -67,7 +67,7 @@ public class AuthAction extends ActionBase {
 
         //有効な従業員か認証する
         Boolean isValidEmployee = service.validateLogin(code, plainPass, pepper);
-        //データ型がbooleanのため真偽値を返す。isvalidEmployeeがtrueなら下記の処理を実行
+
         if (isValidEmployee) {
             //認証成功の場合
 
@@ -96,5 +96,23 @@ public class AuthAction extends ActionBase {
             //ログイン画面を表示
             forward(ForwardConst.FW_LOGIN);
         }
+    }
+
+    /**
+     * ログアウト処理を行う
+     * @throws ServletException
+     * @throws IOException
+     */
+    public void logout() throws ServletException, IOException {
+
+        //セッションからログイン従業員のパラメータを削除
+        removeSessionScope(AttributeConst.LOGIN_EMP);
+
+        //セッションにログアウト時のフラッシュメッセージを追加
+        putSessionScope(AttributeConst.FLUSH, MessageConst.I_LOGOUT.getMessage());
+
+        //ログイン画面にリダイレクト
+        redirect(ForwardConst.ACT_AUTH, ForwardConst.CMD_SHOW_LOGIN);
+
     }
 }

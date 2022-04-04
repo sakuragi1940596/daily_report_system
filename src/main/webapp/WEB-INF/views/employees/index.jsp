@@ -8,7 +8,7 @@
 <c:set var="commShow" value="${ForwardConst.CMD_SHOW.getValue()}" />
 <c:set var="commNew" value="${ForwardConst.CMD_NEW.getValue()}" />
 <c:set var="commIdx" value="${ForwardConst.CMD_INDEX.getValue()}" />
-<%-- 相対パスで共通レイアウトであるapp.jspをimport。employeesの１つ上の階層にlayoutが存在 --%>>
+<%-- 相対パスで共通レイアウトであるapp.jspをimport。employeesの１つ上の階層にlayoutが存在 --%>
 <c:import url="../layout/app.jsp">
     <c:param name="content">
         <%-- 成功時のフラッシュメッセージを表示。${}は、スコープに格納された値や冒頭で定義した変数を使用するためのもの --%>
