@@ -43,24 +43,28 @@ public class LoginFilter implements Filter {
             throws IOException, ServletException {
         String contextPath = ((HttpServletRequest) request).getContextPath();
         String servletPath = ((HttpServletRequest) request).getServletPath();
-
+        //条件にcssを指定することで、cssに対するフィルターの処理を対象から外す
         if (servletPath.matches("/css.*")) {
             // CSSフォルダ内は認証処理から除外する
             chain.doFilter(request, response);
 
         } else {
+            //HttpServletRequest型にrequestをキャストして、セッションを取得
             HttpSession session = ((HttpServletRequest) request).getSession();
 
-            //クエリパラメータからactionとcommandを取得
+            //クエリパラメータからACT=actionとCMD=commandを取得
             String action = request.getParameter(ForwardConst.ACT.getValue());
             String command = request.getParameter(ForwardConst.CMD.getValue());
 
             //セッションからログインしている従業員の情報を取得
             EmployeeView ev = (EmployeeView) session.getAttribute(AttributeConst.LOGIN_EMP.getValue());
-
+            //ログインできていればsessionscopeに保存されているevのインスタンスオブジェクトが存在するかどうかでログイン状態を判定
             if (ev == null) {
                 //未ログイン
-
+                /*リクエストされた処理によって除外するものとしないものがあるので、定数に定義したaction名と、リクエストのクエリパラメータ
+                 * のactionとをequalsで比較し、一致すればtrueとなる。。
+                 * if文がtrueとなるのは①認証、ログイン画面、ログインのどれか１つのみを行う②①以外のすべての場合、の２つである
+                */
                 if (!(ForwardConst.ACT_AUTH.getValue().equals(action)
                         && (ForwardConst.CMD_SHOW_LOGIN.getValue().equals(command)
                                 || ForwardConst.CMD_LOGIN.getValue().equals(command)))) {

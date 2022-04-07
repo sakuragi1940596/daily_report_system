@@ -229,12 +229,16 @@ public class EmployeeService extends ServiceBase {
      * @param pepper pepper文字列
      * @return 認証結果を返却す(成功:true 失敗:false)
      */
+    //AuthActionのloginメソッド内で呼び出され、引数にlogin.jspから送信された社員番号、パスワードが渡される。
     public Boolean validateLogin(String code, String plainPass, String pepper) {
-
+        //初期値をfalseとするboolean型の変数isvalidを定義
         boolean isValidEmployee = false;
+        /*社員番号及びパスワードが、nullではなく、かつ空白入力でもない場合は、findOneメソッドを実行し、
+         * 同社員番号とパスワードのデータをテーブルから取得し、オブジェクトを生成する。
+         */
         if (code != null && !code.equals("") && plainPass != null && !plainPass.equals("")) {
             EmployeeView ev = findOne(code, plainPass, pepper);
-
+            //生成されたevのインスタンスオブジェクトがnullでなく、かつテーブルidもnull出なければ、isvalid変数の値にtrueを再代入
             if (ev != null && ev.getId() != null) {
 
                 //データが取得できた場合、認証成功

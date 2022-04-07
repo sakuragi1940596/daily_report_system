@@ -280,6 +280,7 @@ public class EmployeeAction extends ActionBase {
      * @throws ServletException
      * @throws IOException
      */
+    //boolean型なので、管理者であればtrue、一般であればfalseの真偽値をメソッドの戻り値として返す。
     private boolean checkAdmin() throws ServletException, IOException {
 
         //セッションからログイン中の従業員情報を取得

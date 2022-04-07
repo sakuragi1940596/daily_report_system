@@ -24,13 +24,16 @@
         <div id="header">
             <div id="header_menu">
                 <h1><a href="<c:url value='/?action=${actTop}&command=${commIdx}' />">日報管理システム</a></h1>&nbsp;&nbsp;&nbsp;
+                <%-- loginメソッドにより、正常にログインができた場合の従業員情報のインスタンスオブジェクトevの有無を判定 --%>
                 <c:if test="${sessionScope.login_employee != null}">
+                    <%-- 上記オブジェクトのadminFlagによって、管理者権限の有無を判定 --%>
                     <c:if test="${sessionScope.login_employee.adminFlag == AttributeConst.ROLE_ADMIN.getIntegerValue()}">
                         <a href="<c:url value='?action=${actEmp}&command=${commIdx}' />">従業員管理</a>&nbsp;
                     </c:if>
                     <a href="<c:url value='?action=${actRep}&command=${commIdx}' />">日報管理</a>&nbsp;
                 </c:if>
             </div>
+            <%-- 従業員情報を持つインスタンスオブジェクトevから、従業員情報を.nameで取得する。 --%>
             <c:if test="${sessionScope.login_employee != null}">
                 <div id="employee_name">
                     <c:out value="${sessionScope.login_employee.name}" />
