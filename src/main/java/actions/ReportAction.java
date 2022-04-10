@@ -229,7 +229,7 @@ public class ReportAction extends ActionBase {
                 //セッションに更新完了のフラッシュメッセージを設定
                 putSessionScope(AttributeConst.FLUSH, MessageConst.I_UPDATED.getMessage());
 
-                //一覧画面にリダイレクト
+                //一覧画面にリダイレクトする。
                 redirect(ForwardConst.ACT_REP, ForwardConst.CMD_INDEX);
 
             }
