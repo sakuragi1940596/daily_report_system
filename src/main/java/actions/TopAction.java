@@ -40,5 +40,4 @@ public class TopAction extends ActionBase {
         //一覧画面を表示
         forward(ForwardConst.FW_TOP_INDEX);
     }
-
 }
