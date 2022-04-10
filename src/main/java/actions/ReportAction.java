@@ -61,7 +61,9 @@ public class ReportAction extends ActionBase {
             removeSessionScope(AttributeConst.FLUSH);
         }
 
-        //一覧画面を表示
+        /*一覧画面を表示する。ActionBaseのForwardメソッドを呼び出し、引数に定数で定義したjspのパスとファイル名を指定すれば
+         * HTTPレスポンスが完成してJSPが表示される。詳細はActionBase参照。
+         */
         forward(ForwardConst.FW_REP_INDEX);
     }
 

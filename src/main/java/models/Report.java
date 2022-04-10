@@ -59,7 +59,8 @@ public class Report {
     /**
      * 日報を登録した従業員
      */
-    @ManyToOne
+    //Reportテーブルに従業員idのカラムを作成する。表示するのはidだけだが、従業員情報の入ったオブジェクトがemployeeフィールドに格納される。
+    @ManyToOne//複数の日報に対し、作成者である従業員は一人なので、複数から単一となり、ManyToOne
     @JoinColumn(name = JpaConst.REP_COL_EMP, nullable = false)
     private Employee employee;
 
@@ -67,6 +68,7 @@ public class Report {
      * いつの日報かを示す日付
      */
     @Column(name = JpaConst.REP_COL_REP_DATE, nullable = false)
+    //時間までは不要なのでTimeは記述しない
     private LocalDate reportDate;
 
     /**
@@ -78,7 +80,7 @@ public class Report {
     /**
      * 日報の内容
      */
-    @Lob
+    @Lob//改行も反映できるようにする。
     @Column(name = JpaConst.REP_COL_CONTENT, nullable = false)
     private String content;
 

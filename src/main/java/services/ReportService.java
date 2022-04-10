@@ -24,12 +24,21 @@ public class ReportService extends ServiceBase {
      * @return 一覧画面に表示するデータのリスト
      */
     public List<ReportView> getMinePerPage(EmployeeView employee, int page) {
-
+        /*（）内の引数１がJPQL文であり、この中の変数部分に上記メソッドの引数が渡されることで、CRUD操作を行う。
+         * 上記操作で取得した値をReportクラスのオブジェクトに格納する。
+         */
         List<Report> reports = em.createNamedQuery(JpaConst.Q_REP_GET_ALL_MINE, Report.class)
                 .setParameter(JpaConst.JPQL_PARM_EMPLOYEE, EmployeeConverter.toModel(employee))
+                /*データを何件目から表示するかを指定する。１ページあたりの表示件数が１５件で、
+                 * 表示するページ数はpage変数から１を引いた値となる。これは、Resultの要素は配列と同じく、要素番号は０から始まるためである。
+                 * よって、仮に最初のページを表示するなら、１−１＝０となり、配列要素番号０の値を表示する必要があるため、−１としている。
+                 */
                 .setFirstResult(JpaConst.ROW_PER_PAGE * (page - 1))
+                //１ページあたりの最大表示件数を１５と指定。
                 .setMaxResults(JpaConst.ROW_PER_PAGE)
+                //上記で取得した情報をlist型で取得する。
                 .getResultList();
+        //上記のlistデータが格納されたreportsをtovViewListの引数に渡して、同じ値を持つ表示用のlistを作成
         return ReportConverter.toViewList(reports);
     }
 
@@ -39,8 +48,9 @@ public class ReportService extends ServiceBase {
      * @return 日報データの件数
      */
     public long countAllMine(EmployeeView employee) {
-
+        //引数１にメソッドのJPQL文を実行し、引数２に定義してlongクラスオブジェクトに格納する。
         long count = (long) em.createNamedQuery(JpaConst.Q_REP_COUNT_ALL_MINE, Long.class)
+                //上記のJSQL文の末尾の定数部分にsetParameterの引数２の値を代入してSQL文を完成させて実行
                 .setParameter(JpaConst.JPQL_PARM_EMPLOYEE, EmployeeConverter.toModel(employee))
                 .getSingleResult();
 

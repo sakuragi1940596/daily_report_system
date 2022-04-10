@@ -47,6 +47,7 @@ public class FrontController extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //doPost内にdoGetメソッドを記述しているので、HTTPリクエストがGET、POSTに関わらず、doGetが実行される。
         doGet(request, response);
     }
 
